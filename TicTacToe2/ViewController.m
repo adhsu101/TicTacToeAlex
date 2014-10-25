@@ -25,13 +25,19 @@
 @end
 
 @implementation ViewController
-
+int timeTick = 0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.isPlayerO = NO;
     self.playerLabel.text = @"X";
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(tick) userInfo:nil repeats:YES];
     
+}
+-(void)tick{
+    timeTick++;
+    NSString *timeString =[[NSString alloc]initWithFormat:@"%d",timeTick];
+    labelTime.text = timeString;
 }
 
 - (IBAction)onLabelTapped:(UITapGestureRecognizer*)tapLabel
