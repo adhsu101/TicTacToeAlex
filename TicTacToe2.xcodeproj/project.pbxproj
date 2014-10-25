@@ -63,6 +63,7 @@
 		39E0DD0219F9EBFA0095855F = {
 			isa = PBXGroup;
 			children = (
+				39E0DD1819F9EBFA0095855F /* Main.storyboard */,
 				39E0DD0D19F9EBFA0095855F /* TicTacToe2 */,
 				39E0DD2719F9EBFA0095855F /* TicTacToe2Tests */,
 				39E0DD0C19F9EBFA0095855F /* Products */,
@@ -85,7 +86,6 @@
 				39E0DD1319F9EBFA0095855F /* AppDelegate.m */,
 				39E0DD1519F9EBFA0095855F /* ViewController.h */,
 				39E0DD1619F9EBFA0095855F /* ViewController.m */,
-				39E0DD1819F9EBFA0095855F /* Main.storyboard */,
 				39E0DD1B19F9EBFA0095855F /* Images.xcassets */,
 				39E0DD1D19F9EBFA0095855F /* LaunchScreen.xib */,
 				39E0DD0E19F9EBFA0095855F /* Supporting Files */,
@@ -250,6 +250,7 @@
 				39E0DD1919F9EBFA0095855F /* Base */,
 			);
 			name = Main.storyboard;
+			path = TicTacToe2;
 			sourceTree = "<group>";
 		};
 		39E0DD1D19F9EBFA0095855F /* LaunchScreen.xib */ = {
@@ -412,6 +413,7 @@
 				39E0DD3019F9EBFA0095855F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		39E0DD3119F9EBFA0095855F /* Build configuration list for PBXNativeTarget "TicTacToe2Tests" */ = {
 			isa = XCConfigurationList;
@@ -420,6 +422,7 @@
 				39E0DD3319F9EBFA0095855F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

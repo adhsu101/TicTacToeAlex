@@ -41,39 +41,36 @@
     
     if ([tappedLabel.text isEqualToString:@""])
     {
-
+        // enter X or O into grid
         tappedLabel.text = self.playerLabel.text;
-       
+        
+        // color X or O
         if ([self.playerLabel.text isEqualToString:@"O"])
         {
-            self.playerLabel.text = @"X";
             tappedLabel.textColor = [UIColor redColor];
         }
         else
         {
-            self.playerLabel.text = @"O";
             tappedLabel.textColor = [UIColor blueColor];
         }
-
+        
+        // check for win
         NSString *winner = [self whoWon:tappedLabel];
         if (winner == nil)
         {
-            if (self.isPlayerO)
+            if ([self.playerLabel.text isEqualToString:@"O"])
             {
                 self.playerLabel.text = @"X";
             }
             else
             {
                 self.playerLabel.text = @"O";
-
             }
-            self.isPlayerO = !self.isPlayerO;
         }
         else
         {
             // call method to alert with winner
-            NSLog(@"Winner is player %@", winner);
-            
+            [self winnerAlert];            
         }
         
     }
@@ -148,6 +145,15 @@
         winner = self.playerLabel.text;
     }
     return winner;
+}
+
+- (void)winnerAlert
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Player %@", self.playerLabel.text]  message:@"We have a winner!" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okButton = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:okButton];
+    [self presentViewController:alert animated:YES completion:nil];
+
 }
 
 # pragma mark - Win conditions
