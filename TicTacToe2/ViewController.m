@@ -30,21 +30,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.isPlayerO = NO;
-    self.playerLabel.text = @"Turn: Player X";
+    self.playerLabel.text = @"X";
     
-    // array of labels
-    
-    // set label tags
-    int labelTag = 1;
-    for (UILabel* label in self.labels)
-    {
-        NSLog(@"Label tag is %d", labelTag);
-        label.tag = labelTag;
-        labelTag ++;
-    }
-    
-    
-    // Do any additional setup after loading the view, typically from a nib.
 }
 
 - (IBAction)onLabelTapped:(UITapGestureRecognizer*)tapLabel
@@ -52,58 +39,46 @@
     CGPoint point = [tapLabel locationInView:self.view];
     UILabel *tappedLabel = [self findLabelUsingPoint:point];
     
-    if ([tappedLabel.text isEqualToString:@""]) {
-        
-        if (tappedLabel != nil)
+    if ([tappedLabel.text isEqualToString:@""])
+    {
+
+        tappedLabel.text = self.playerLabel.text;
+       
+        if ([self.playerLabel.text isEqualToString:@"O"])
         {
-            if (self.isPlayerO){
-                tappedLabel.text = @"O";
-                self.playerLabel.text = @"Turn: Player X";
-                tappedLabel.textColor = [UIColor blueColor];
+            self.playerLabel.text = @"X";
+            tappedLabel.textColor = [UIColor redColor];
+        }
+        else
+        {
+            self.playerLabel.text = @"O";
+            tappedLabel.textColor = [UIColor blueColor];
+        }
+
+        NSString *winner = [self whoWon:tappedLabel];
+        if (winner == nil)
+        {
+            if (self.isPlayerO)
+            {
+                self.playerLabel.text = @"X";
             }
             else
             {
-                tappedLabel.text = @"X";
-                self.playerLabel.text = @"Turn: Player O";
-                tappedLabel.textColor = [UIColor redColor];
+                self.playerLabel.text = @"O";
+
             }
-        self.isPlayerO = !self.isPlayerO;
+            self.isPlayerO = !self.isPlayerO;
         }
+        else
+        {
+            // call method to alert with winner
+            NSLog(@"Winner is player %@", winner);
+            
+        }
+        
     }
     
-    switch (tappedLabel.tag)
-    {
-        case 1:
-            NSLog (@"one");
-            break;
-        case 2:
-            NSLog (@"two");
-            break;
-        case 3:
-            NSLog (@"three");
-            break;
-        case 4:
-            NSLog (@"four");
-            break;
-        case 5:
-            NSLog (@"five");
-            break;
-        case 6:
-            NSLog (@"six");
-            break;
-        case 7:
-            NSLog (@"sev");
-            break;
-        case 8:
-            NSLog (@"eight");
-            break;
-        case 9:
-            NSLog (@"nine");
-            break;
-        default:
-            NSLog (@"Integer out of range");
-            break;
-    }
+// set winner here
     
 }
 
@@ -114,56 +89,140 @@
     for (UILabel* label in self.labels)
     {
         if (CGRectContainsPoint(label.frame, point))
-            {
+        {
                 return label;
-            }
+        }
 
     }
     return nil;
 }
 
--(BOOL)col1Win
+- (NSString *)whoWon: (UILabel*) tappedLabel
 {
-    if ([self.label1.text isEqualToString:self.label2.text] && [self.label1.text isEqualToString:self.label3.text]) {
+    BOOL winnerExists = 0;
+    NSString *winner = nil;
+    switch (tappedLabel.tag)
+    {
+        case 1:
+            if ([self didWinCol1] || [self didWinRow1] || [self didWinDiag1])
+                winnerExists = 1;
+            break;
+        case 2:
+            if ([self didWinRow1] || [self didWinCol2])
+                winnerExists = 1;
+            break;
+        case 3:
+            if ([self didWinCol3] || [self didWinRow1] || [self didWinDiag3])
+            winnerExists = 1;
+
+            break;
+        case 4:
+            if ([self didWinCol1] || [self didWinRow4])
+                winnerExists = 1;
+            break;
+        case 5:
+            if ([self didWinCol2] || [self didWinRow4] || [self didWinDiag1] || [self didWinDiag3])
+                winnerExists = 1;
+            break;
+        case 6:
+            if ([self didWinCol3] || [self didWinRow4])
+                winnerExists = 1;
+            break;
+        case 7:
+            if ([self didWinCol1] || [self didWinRow7] || [self didWinDiag3])
+                winnerExists = 1;
+           break;
+        case 8:
+            if ([self didWinCol2] || [self didWinRow7])
+                winnerExists = 1;
+            break;
+        case 9:
+            if ([self didWinCol3] || [self didWinRow7] || [self didWinDiag1])
+                winnerExists = 1;
+            break;
+        default:
+            NSLog (@"Integer out of range");
+            break;
+    }
+    if (winnerExists) {
+        winner = self.playerLabel.text;
+    }
+    return winner;
+}
+
+# pragma mark - Win conditions
+
+-(BOOL)didWinCol1
+{
+    if ([self.label1.text isEqualToString:self.label4.text] && [self.label1.text isEqualToString:self.label7.text])
+    {
+        NSLog(@"Winner!");
         return YES;
     }
-    NSLog(@"Winner!");
     return NO;
 }
 
--(BOOL)col2Win
+-(BOOL)didWinCol2
 {
-    return YES;
-}
+    if ([self.label2.text isEqualToString:self.label5.text] && [self.label2.text isEqualToString:self.label8.text])
+    {
+        NSLog(@"Winner!");
+        return YES;
+    }
+    return NO;}
 
--(BOOL)col3Win
+-(BOOL)didWinCol3
 {
-    return YES;
-}
+    if ([self.label3.text isEqualToString:self.label6.text] && [self.label3.text isEqualToString:self.label9.text])
+    {
+        NSLog(@"Winner!");
+        return YES;
+    }
+    return NO;}
 
--(BOOL)row1Win
+-(BOOL)didWinRow1
 {
-    return YES;
-}
+    if ([self.label1.text isEqualToString:self.label2.text] && [self.label1.text isEqualToString:self.label3.text])
+    {
+        NSLog(@"Winner!");
+        return YES;
+    }
+    return NO;}
 
--(BOOL)row2Win
+-(BOOL)didWinRow4
 {
-    return YES;
-}
+    if ([self.label4.text isEqualToString:self.label5.text] && [self.label4.text isEqualToString:self.label6.text])
+    {
+        NSLog(@"Winner!");
+        return YES;
+    }
+    return NO;}
 
--(BOOL)row3Win
+-(BOOL)didWinRow7
 {
-    return YES;
-}
+    if ([self.label7.text isEqualToString:self.label8.text] && [self.label7.text isEqualToString:self.label9.text])
+    {
+        NSLog(@"Winner!");
+        return YES;
+    }
+    return NO;}
 
--(BOOL)diag1To9Win
+-(BOOL)didWinDiag1
 {
-    return YES;
-}
+    if ([self.label1.text isEqualToString:self.label5.text] && [self.label1.text isEqualToString:self.label9.text])
+    {
+        NSLog(@"Winner!");
+        return YES;
+    }
+    return NO;}
 
--(BOOL)diag3To7Win
+-(BOOL)didWinDiag3
 {
-    return YES;
-}
+    if ([self.label3.text isEqualToString:self.label5.text] && [self.label3.text isEqualToString:self.label7.text])
+    {
+        NSLog(@"Winner!");
+        return YES;
+    }
+    return NO;}
 
 @end
