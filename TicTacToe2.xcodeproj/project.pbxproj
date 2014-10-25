@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		391FE20C19FC3B4C001AFEA7 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 391FE20B19FC3B4C001AFEA7 /* HelpViewController.m */; };
 		39E0DD1119F9EBFA0095855F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E0DD1019F9EBFA0095855F /* main.m */; };
 		39E0DD1419F9EBFA0095855F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E0DD1319F9EBFA0095855F /* AppDelegate.m */; };
 		39E0DD1719F9EBFA0095855F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E0DD1619F9EBFA0095855F /* ViewController.m */; };
@@ -27,6 +28,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		391FE20A19FC3B4C001AFEA7 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
+		391FE20B19FC3B4C001AFEA7 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewController.m; sourceTree = "<group>"; };
 		39E0DD0B19F9EBFA0095855F /* TicTacToe2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TicTacToe2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39E0DD0F19F9EBFA0095855F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		39E0DD1019F9EBFA0095855F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -86,6 +89,8 @@
 				39E0DD1319F9EBFA0095855F /* AppDelegate.m */,
 				39E0DD1519F9EBFA0095855F /* ViewController.h */,
 				39E0DD1619F9EBFA0095855F /* ViewController.m */,
+				391FE20A19FC3B4C001AFEA7 /* HelpViewController.h */,
+				391FE20B19FC3B4C001AFEA7 /* HelpViewController.m */,
 				39E0DD1B19F9EBFA0095855F /* Images.xcassets */,
 				39E0DD1D19F9EBFA0095855F /* LaunchScreen.xib */,
 				39E0DD0E19F9EBFA0095855F /* Supporting Files */,
@@ -222,6 +227,7 @@
 				39E0DD1719F9EBFA0095855F /* ViewController.m in Sources */,
 				39E0DD1419F9EBFA0095855F /* AppDelegate.m in Sources */,
 				39E0DD1119F9EBFA0095855F /* main.m in Sources */,
+				391FE20C19FC3B4C001AFEA7 /* HelpViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

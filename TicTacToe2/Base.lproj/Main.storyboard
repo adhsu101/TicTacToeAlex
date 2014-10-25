@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="JQ2-7J-ZEZ">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
@@ -98,6 +98,15 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MMt-dq-IVC">
+                                <rect key="frame" x="16" y="518" width="46" height="30"/>
+                                <state key="normal" title="Help">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="6Es-uA-dZm" kind="push" id="nau-m8-UEi"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
@@ -106,6 +115,7 @@
                             <outletCollection property="gestureRecognizers" destination="zbP-F1-qrO" appends="YES" id="dau-ML-DSP"/>
                         </connections>
                     </view>
+                    <navigationItem key="navigationItem" id="lqR-GG-s5S"/>
                     <connections>
                         <outlet property="label1" destination="FUx-x5-FK8" id="Gca-oe-dj4"/>
                         <outlet property="label2" destination="8EL-lg-jbl" id="uxd-i3-4VE"/>
@@ -140,6 +150,55 @@
                         <action selector="panHandler:" destination="vXZ-lx-hvc" id="M6F-Zg-1pW"/>
                     </connections>
                 </panGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="662" y="319"/>
+        </scene>
+        <!--Help View Controller-->
+        <scene sceneID="E0n-Ag-7bB">
+            <objects>
+                <viewController id="6Es-uA-dZm" customClass="HelpViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="42o-Gc-eec"/>
+                        <viewControllerLayoutGuide type="bottom" id="xbR-1r-sJH"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="sKL-XB-9ht">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5iX-KW-UlZ">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="delegate" destination="6Es-uA-dZm" id="p55-qr-xPS"/>
+                                </connections>
+                            </webView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="FvJ-ZW-ubi"/>
+                    <connections>
+                        <outlet property="helpWebView" destination="5iX-KW-UlZ" id="2DJ-pK-j7F"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MvE-9f-8AP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1022" y="319"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="SYb-PX-xk2">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="JQ2-7J-ZEZ" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="jVM-R2-8iQ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="gUr-9c-MwH"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xKc-Lm-2IZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="130" y="319"/>
         </scene>
