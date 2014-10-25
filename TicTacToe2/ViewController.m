@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#define kTimerStart 10
 
 @interface ViewController ()
 @property (strong, nonatomic) IBOutlet UILabel *label1;
@@ -21,29 +22,30 @@
 @property (nonatomic) BOOL isPlayerO;
 @property (weak, nonatomic) IBOutlet UILabel *playerLabel;
 @property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *labels;
+@property CGPoint playerLabelOriginalCenter;
+@property NSInteger timeTick;
+@property (strong, nonatomic) IBOutlet UILabel *timerLabel;
+@property NSTimer *timer;
 
 @end
 
 @implementation ViewController
-int timeTick = 0;
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.isPlayerO = NO;
     self.playerLabel.text = @"X";
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(tick) userInfo:nil repeats:YES];
+    self.playerLabelOriginalCenter = self.playerLabel.center;
+    [self startRepeatingTimer];
     
 }
--(void)tick{
-    timeTick++;
-    NSString *timeString =[[NSString alloc]initWithFormat:@"%d",timeTick];
-    labelTime.text = timeString;
-}
 
-- (IBAction)onLabelTapped:(UITapGestureRecognizer*)tapLabel
+- (IBAction)onLabelTapped:(UITapGestureRecognizer*)gesture
 {
-    CGPoint point = [tapLabel locationInView:self.view];
-    UILabel *tappedLabel = [self findLabelUsingPoint:point];
+    [self startRepeatingTimer];
+    CGPoint touchPoint = [gesture locationInView:self.view];
+    UILabel *tappedLabel = [self findLabelUsingPoint:touchPoint];
     
     if ([tappedLabel.text isEqualToString:@""])
     {
@@ -64,14 +66,7 @@ int timeTick = 0;
         NSString *winner = [self whoWon:tappedLabel];
         if (winner == nil)
         {
-            if ([self.playerLabel.text isEqualToString:@"O"])
-            {
-                self.playerLabel.text = @"X";
-            }
-            else
-            {
-                self.playerLabel.text = @"O";
-            }
+            [self changePlayers];
         }
         else
         {
@@ -81,11 +76,61 @@ int timeTick = 0;
         
     }
     
-// set winner here
-    
 }
 
-# pragma mark - Helper
+- (IBAction)panHandler:(UIPanGestureRecognizer *)gesture
+{
+    CGPoint touchPoint = [gesture locationInView:self.view];
+    self.playerLabel.center = touchPoint;
+    
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+
+        UILabel *hoveredLabel = [self findLabelUsingPoint:touchPoint];
+        
+        if ([hoveredLabel.text isEqualToString:@""])
+        {
+            [self startRepeatingTimer];
+
+            // enter X or O into grid
+            hoveredLabel.text = self.playerLabel.text;
+            
+            // color X or O
+            if ([self.playerLabel.text isEqualToString:@"O"])
+            {
+                hoveredLabel.textColor = [UIColor redColor];
+            }
+            else
+            {
+                hoveredLabel.textColor = [UIColor blueColor];
+            }
+
+            
+            // check for win
+            NSString *winner = [self whoWon:hoveredLabel];
+            if (winner == nil)
+            {
+                [self changePlayers];
+            }
+            else
+            {
+                // call method to alert with winner
+                [self winnerAlert];
+            }
+            
+        }
+        else
+        {
+        // animate to original position
+            [UIView animateWithDuration:.5 animations:^{
+                self.playerLabel.center = self.playerLabelOriginalCenter;
+            }];
+        }
+        
+    }
+}
+
+
+# pragma mark - Helper methods
 
 -(UILabel *)findLabelUsingPoint: (CGPoint) point
 {
@@ -98,6 +143,18 @@ int timeTick = 0;
 
     }
     return nil;
+}
+
+- (void)changePlayers
+{
+    if ([self.playerLabel.text isEqualToString:@"O"])
+    {
+        self.playerLabel.text = @"X";
+    }
+    else
+    {
+        self.playerLabel.text = @"O";
+    }
 }
 
 - (NSString *)whoWon: (UILabel*) tappedLabel
@@ -155,11 +212,48 @@ int timeTick = 0;
 
 - (void)winnerAlert
 {
+    [self.timer invalidate];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Player %@", self.playerLabel.text]  message:@"We have a winner!" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okButton = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alert addAction:okButton];
+    UIAlertAction *playAgainButton = [UIAlertAction actionWithTitle:@"Play again" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self restartGame];
+    }];
+    [alert addAction:playAgainButton];
     [self presentViewController:alert animated:YES completion:nil];
 
+}
+
+- (void)startRepeatingTimer {
+
+    [self.timer invalidate];
+    self.timerLabel.text = [NSString stringWithFormat:@"%d", kTimerStart];
+    self.timeTick = kTimerStart;
+    
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timerCountdown) userInfo:nil repeats:YES];
+    
+    self.timer = timer;
+    
+}
+
+-(void)timerCountdown{
+    self.timeTick--;
+    if (self.timeTick == 0)
+    {
+        [self changePlayers];
+        self.timeTick = kTimerStart;
+    }
+    NSString *timeString =[[NSString alloc]initWithFormat:@"%ld",(long)(self.timeTick)];
+    self.timerLabel.text = timeString;
+}
+
+- (void)restartGame
+{
+    self.playerLabel.text = @"X";
+    for (UILabel* label in self.labels)
+    {
+        label.text = @"";
+        
+    }
+    [self startRepeatingTimer];
 }
 
 # pragma mark - Win conditions

@@ -8,10 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController{
-    
-    IBOutlet UILabel *labelTime;
-}
+@interface ViewController : UIViewController
 
 
 @end
