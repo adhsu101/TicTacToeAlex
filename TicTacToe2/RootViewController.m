@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Vala Kohnechi. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "RootViewController.h"
 #define kTimerStart 10
 
-@interface ViewController ()
+@interface RootViewController ()
 @property (strong, nonatomic) IBOutlet UILabel *label1;
 @property (strong, nonatomic) IBOutlet UILabel *label2;
 @property (strong, nonatomic) IBOutlet UILabel *label3;
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation ViewController
+@implementation RootViewController
 
 
 - (void)viewDidLoad {
@@ -43,12 +43,14 @@
 
 - (IBAction)onLabelTapped:(UITapGestureRecognizer*)gesture
 {
-    [self startRepeatingTimer];
     CGPoint touchPoint = [gesture locationInView:self.view];
     UILabel *tappedLabel = [self findLabelUsingPoint:touchPoint];
     
     if ([tappedLabel.text isEqualToString:@""])
     {
+        // restart timer
+        [self startRepeatingTimer];
+        
         // enter X or O into grid
         tappedLabel.text = self.playerLabel.text;
         
@@ -66,6 +68,7 @@
         NSString *winner = [self whoWon:tappedLabel];
         if (winner == nil)
         {
+            [self checkForTie];
             [self changePlayers];
         }
         else
@@ -109,6 +112,7 @@
             NSString *winner = [self whoWon:hoveredLabel];
             if (winner == nil)
             {
+                [self checkForTie];
                 [self changePlayers];
             }
             else
@@ -210,6 +214,28 @@
     return winner;
 }
 
+- (void)checkForTie
+{
+    BOOL isTie = YES;
+    for (UILabel *label in self.labels)
+    {
+        if ([label.text isEqualToString:@""])
+            isTie = NO;
+        
+    }
+    
+    if (isTie)
+    {
+        [self.timer invalidate];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"It's a tie!"  message:nil preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *playAgainButton = [UIAlertAction actionWithTitle:@"Play again" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self restartGame];
+        }];
+        [alert addAction:playAgainButton];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
+}
+
 - (void)winnerAlert
 {
     [self.timer invalidate];
@@ -221,6 +247,8 @@
     [self presentViewController:alert animated:YES completion:nil];
 
 }
+
+
 
 - (void)startRepeatingTimer {
 

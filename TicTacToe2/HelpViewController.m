@@ -7,7 +7,7 @@
 //
 
 #import "HelpViewController.h"
-#import "ViewController.h"
+#import "RootViewController.h"
 
 @interface HelpViewController ()
 <UIWebViewDelegate>
