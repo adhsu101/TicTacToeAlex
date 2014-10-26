@@ -35,7 +35,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    self.playerIsX = YES;
+    self.playerIsX = YES;
     self.playerLabel.text = @"X";
     self.playerLabelOriginalCenter = self.playerLabel.center;
     [self startRepeatingTimer];
@@ -83,8 +83,8 @@
         
     }
     
-//    NSArray *tempCheckForBestMoveAndScore = [[NSArray alloc]init];
-//    tempCheckForBestMoveAndScore = [self decideOnMove:[self gameStateFromLabels:self.labels] :NO];
+    NSArray *tempCheckForBestMoveAndScore = [[NSArray alloc]init];
+    tempCheckForBestMoveAndScore = [self decideOnMove:[self gameStateFromLabels:self.labels] :self.playerIsX];
 
 }
 
@@ -384,7 +384,8 @@
     NSInteger bestMoveIndex = 0;
     if (playerIsX)
     {
-        if (scoreNumArray.count == 1) {
+        if (scoreNumArray.count == 1)
+        {
             bestScore = scoreNumArray[0];
         }
         for (NSInteger x = 1; x < scoreNumArray.count; x++)
@@ -403,6 +404,9 @@
     }
     else
     {
+        if (scoreNumArray.count == 1) {
+            bestScore = scoreNumArray[0];
+        }
         for (NSInteger x = 1; x < scoreNumArray.count; x++)
         {
             if (scoreNumArray[x-1] < scoreNumArray[x])
