@@ -19,13 +19,14 @@
 @property (strong, nonatomic) IBOutlet UILabel *label7;
 @property (strong, nonatomic) IBOutlet UILabel *label8;
 @property (strong, nonatomic) IBOutlet UILabel *label9;
-@property (nonatomic) BOOL isPlayerO;
+@property (nonatomic) BOOL playerIsX;
 @property (weak, nonatomic) IBOutlet UILabel *playerLabel;
 @property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *labels;
 @property CGPoint playerLabelOriginalCenter;
 @property NSInteger timeTick;
 @property (strong, nonatomic) IBOutlet UILabel *timerLabel;
 @property NSTimer *timer;
+@property BOOL isComputersTurn;
 
 @end
 
@@ -34,15 +35,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.isPlayerO = NO;
+//    self.playerIsX = YES;
     self.playerLabel.text = @"X";
     self.playerLabelOriginalCenter = self.playerLabel.center;
     [self startRepeatingTimer];
+    self.isComputersTurn = NO;
     
 }
 
 - (IBAction)onLabelTapped:(UITapGestureRecognizer*)gesture
 {
+    if (self.isComputersTurn) return;
+    
     CGPoint touchPoint = [gesture locationInView:self.view];
     UILabel *tappedLabel = [self findLabelUsingPoint:touchPoint];
     
@@ -65,7 +69,7 @@
         }
         
         // check for win
-        NSString *winner = [self whoWon:tappedLabel];
+        NSString *winner = [self whoWon:tappedLabel.tag:[self gameStateFromLabels:self.labels]];
         if (winner == nil)
         {
             [self checkForTie];
@@ -79,10 +83,15 @@
         
     }
     
+//    NSArray *tempCheckForBestMoveAndScore = [[NSArray alloc]init];
+//    tempCheckForBestMoveAndScore = [self decideOnMove:[self gameStateFromLabels:self.labels] :NO];
+
 }
 
 - (IBAction)panHandler:(UIPanGestureRecognizer *)gesture
 {
+    if (self.isComputersTurn) return;
+    
     CGPoint touchPoint = [gesture locationInView:self.view];
     self.playerLabel.center = touchPoint;
     
@@ -109,7 +118,7 @@
 
             
             // check for win
-            NSString *winner = [self whoWon:hoveredLabel];
+            NSString *winner = [self whoWon:hoveredLabel.tag:[self gameStateFromLabels:self.labels]];
             if (winner == nil)
             {
                 [self checkForTie];
@@ -136,9 +145,33 @@
 
 # pragma mark - Helper methods
 
+- (NSArray *)gameStateFromLabels: (NSArray*) currentLabels
+{
+    NSMutableArray *gameState = [[NSMutableArray alloc] init];
+    
+    for (UILabel *label in currentLabels)
+    {
+        NSString *squareState = @"0";
+        if ([label.text isEqualToString:@"X"])
+        {
+            squareState = @"1";
+        }
+        else if ([label.text isEqualToString:@"O"])
+            {
+                squareState = @"2";
+            }
+        [gameState addObject:squareState];
+    }
+    return gameState;
+}
+
+
+ 
+
+
 -(UILabel *)findLabelUsingPoint: (CGPoint) point
 {
-    for (UILabel* label in self.labels)
+    for (UILabel *label in self.labels)
     {
         if (CGRectContainsPoint(label.frame, point))
         {
@@ -161,47 +194,47 @@
     }
 }
 
-- (NSString *)whoWon: (UILabel*) tappedLabel
+- (NSString *)whoWon: (NSInteger)moveIndex : (NSArray *)gameState
 {
     BOOL winnerExists = 0;
     NSString *winner = nil;
-    switch (tappedLabel.tag)
+    switch (moveIndex)
     {
+        case 0:
+            if ([self didWinCol1:gameState] || [self didWinRow1:gameState] || [self didWinDiag1:gameState])
+                winnerExists = 1;
+            break;
         case 1:
-            if ([self didWinCol1] || [self didWinRow1] || [self didWinDiag1])
+            if ([self didWinRow1:gameState] || [self didWinCol2:gameState])
                 winnerExists = 1;
             break;
         case 2:
-            if ([self didWinRow1] || [self didWinCol2])
-                winnerExists = 1;
-            break;
-        case 3:
-            if ([self didWinCol3] || [self didWinRow1] || [self didWinDiag3])
+            if ([self didWinCol3:gameState] || [self didWinRow1:gameState] || [self didWinDiag3:gameState])
             winnerExists = 1;
 
             break;
+        case 3:
+            if ([self didWinCol1:gameState] || [self didWinRow4:gameState])
+                winnerExists = 1;
+            break;
         case 4:
-            if ([self didWinCol1] || [self didWinRow4])
+            if ([self didWinCol2:gameState] || [self didWinRow4:gameState] || [self didWinDiag1:gameState] || [self didWinDiag3:gameState])
                 winnerExists = 1;
             break;
         case 5:
-            if ([self didWinCol2] || [self didWinRow4] || [self didWinDiag1] || [self didWinDiag3])
+            if ([self didWinCol3:gameState] || [self didWinRow4:gameState])
                 winnerExists = 1;
             break;
         case 6:
-            if ([self didWinCol3] || [self didWinRow4])
-                winnerExists = 1;
-            break;
-        case 7:
-            if ([self didWinCol1] || [self didWinRow7] || [self didWinDiag3])
+            if ([self didWinCol1:gameState] || [self didWinRow7:gameState] || [self didWinDiag3:gameState])
                 winnerExists = 1;
            break;
-        case 8:
-            if ([self didWinCol2] || [self didWinRow7])
+        case 7:
+            if ([self didWinCol2:gameState] || [self didWinRow7:gameState])
                 winnerExists = 1;
             break;
-        case 9:
-            if ([self didWinCol3] || [self didWinRow7] || [self didWinDiag1])
+        case 8:
+            if ([self didWinCol3:gameState] || [self didWinRow7:gameState] || [self didWinDiag1:gameState])
                 winnerExists = 1;
             break;
         default:
@@ -276,7 +309,7 @@
 - (void)restartGame
 {
     self.playerLabel.text = @"X";
-    for (UILabel* label in self.labels)
+    for (UILabel *label in self.labels)
     {
         label.text = @"";
         
@@ -284,11 +317,137 @@
     [self startRepeatingTimer];
 }
 
+# pragma mark - AI methods
+
+- (NSArray *)decideOnMove: (NSArray *)passedGameState : (BOOL)playerIsX
+{
+    NSString *playerMove;
+    if (playerIsX) playerMove = @"1";
+    else playerMove = @"2";
+    
+    // get available moves
+    NSArray *availableMoves = [self availableMovesInGameState: passedGameState];
+    
+    // create hypothetical game states based on available moves
+    NSMutableArray *possibleGameStates = [[NSMutableArray alloc] init];
+    for (NSString *availableMove in availableMoves)
+    {
+        NSMutableArray *newGameState = [[NSMutableArray alloc] initWithArray:passedGameState];
+        [newGameState replaceObjectAtIndex:[availableMove intValue] withObject:playerMove];
+        [possibleGameStates addObject:newGameState];
+    }
+    
+    // check game states for win and score each game state
+    NSString *winner = nil;
+    NSMutableArray *scores = [[NSMutableArray alloc] init];
+    NSUInteger index = 0;
+    for (NSArray *possibleGameState in possibleGameStates)
+    {
+        NSString *indexString = [availableMoves objectAtIndex:index];
+        winner = [self whoWon:[indexString intValue] :possibleGameState];
+        if ([winner isEqualToString:@"X"])
+        {
+            [scores addObject:@"10"];
+        }
+        else if ([winner isEqualToString:@"O"])
+        {
+            [scores addObject:@"-10"];
+        }
+        else
+        {
+            if (availableMoves.count == 1)
+            {
+                [scores addObject:@"0"];
+            }
+            else
+            {
+                NSArray *recursiveBestMoveAndScore = [[NSArray alloc] init];
+                recursiveBestMoveAndScore = [self decideOnMove:possibleGameState:!playerIsX];
+                NSNumber *score = [recursiveBestMoveAndScore objectAtIndex:1];
+                [scores addObject:[NSString stringWithFormat:@"%@", score]];
+            }
+        }
+        index++;
+    }
+    
+    // convert score array to NSNumbers
+    NSNumber *scoreNum = 0;
+    NSMutableArray *scoreNumArray = [[NSMutableArray alloc] init];
+    for (NSString *score in scores) {
+        NSInteger scoreInteger = [score integerValue];
+        scoreNum = [NSNumber numberWithInteger:scoreInteger];
+        [scoreNumArray addObject:scoreNum];
+    }
+    
+    // determine best move and score
+    NSNumber *bestScore = 0;
+    NSInteger bestMoveIndex = 0;
+    if (playerIsX)
+    {
+        if (scoreNumArray.count == 1) {
+            bestScore = scoreNumArray[0];
+        }
+        for (NSInteger x = 1; x < scoreNumArray.count; x++)
+        {
+            if (scoreNumArray[x-1] > scoreNumArray[x])
+            {
+                bestScore = scoreNumArray[x-1];
+                bestMoveIndex = x-1;
+            }
+            else
+            {
+                bestScore = scoreNumArray[x];
+                bestMoveIndex = x;
+            }
+        }
+    }
+    else
+    {
+        for (NSInteger x = 1; x < scoreNumArray.count; x++)
+        {
+            if (scoreNumArray[x-1] < scoreNumArray[x])
+            {
+                bestScore = scoreNumArray[x-1];
+                bestMoveIndex = x-1;
+            }
+            else
+            {
+                bestScore = scoreNumArray[x];
+                bestMoveIndex = x;
+            }
+        }
+        
+    }
+    
+    // return best move and score
+    NSString *bestMove = availableMoves[bestMoveIndex];
+    NSArray *bestMoveAndScore = [NSArray arrayWithObjects: bestMove, bestScore, nil];
+    return bestMoveAndScore;
+}
+
+- (NSArray *)availableMovesInGameState: (NSArray*) gameState
+{
+    NSMutableArray *availableMovesArray = [[NSMutableArray alloc] init];
+    NSInteger squareIndex = 0;
+    NSString *availableMove = nil;
+
+    for (NSString *square in gameState)
+    {
+        if ([square isEqualToString:@"0"])
+        {
+            availableMove = [NSString stringWithFormat:@"%lu", squareIndex];
+            [availableMovesArray addObject:availableMove];
+        }
+        squareIndex++;
+    }
+    return availableMovesArray;
+}
+
 # pragma mark - Win conditions
 
--(BOOL)didWinCol1
+-(BOOL)didWinCol1: (NSArray*) gameState
 {
-    if ([self.label1.text isEqualToString:self.label4.text] && [self.label1.text isEqualToString:self.label7.text])
+    if ([gameState[0] isEqualToString:gameState[3]] && [gameState[0] isEqualToString:gameState[6]])
     {
         NSLog(@"Winner!");
         return YES;
@@ -296,63 +455,63 @@
     return NO;
 }
 
--(BOOL)didWinCol2
+-(BOOL)didWinCol2: (NSArray*) gameState
 {
-    if ([self.label2.text isEqualToString:self.label5.text] && [self.label2.text isEqualToString:self.label8.text])
+    if ([gameState[1] isEqualToString:gameState[4]] && [gameState[1] isEqualToString:gameState[7]])
     {
         NSLog(@"Winner!");
         return YES;
     }
     return NO;}
 
--(BOOL)didWinCol3
+-(BOOL)didWinCol3: (NSArray*) gameState
 {
-    if ([self.label3.text isEqualToString:self.label6.text] && [self.label3.text isEqualToString:self.label9.text])
+    if ([gameState[2] isEqualToString:gameState[5]] && [gameState[2] isEqualToString:gameState[8]])
     {
         NSLog(@"Winner!");
         return YES;
     }
     return NO;}
 
--(BOOL)didWinRow1
+-(BOOL)didWinRow1: (NSArray*) gameState
 {
-    if ([self.label1.text isEqualToString:self.label2.text] && [self.label1.text isEqualToString:self.label3.text])
+    if ([gameState[0] isEqualToString:gameState[1]] && [gameState[0] isEqualToString:gameState[2]])
     {
         NSLog(@"Winner!");
         return YES;
     }
     return NO;}
 
--(BOOL)didWinRow4
+-(BOOL)didWinRow4: (NSArray*) gameState
 {
-    if ([self.label4.text isEqualToString:self.label5.text] && [self.label4.text isEqualToString:self.label6.text])
+    if ([gameState[3] isEqualToString:gameState[4]] && [gameState[3] isEqualToString:gameState[5]])
     {
         NSLog(@"Winner!");
         return YES;
     }
     return NO;}
 
--(BOOL)didWinRow7
+-(BOOL)didWinRow7: (NSArray*) gameState
 {
-    if ([self.label7.text isEqualToString:self.label8.text] && [self.label7.text isEqualToString:self.label9.text])
+    if ([gameState[6] isEqualToString:gameState[7]] && [gameState[6] isEqualToString:gameState[8]])
     {
         NSLog(@"Winner!");
         return YES;
     }
     return NO;}
 
--(BOOL)didWinDiag1
+-(BOOL)didWinDiag1: (NSArray*) gameState
 {
-    if ([self.label1.text isEqualToString:self.label5.text] && [self.label1.text isEqualToString:self.label9.text])
+    if ([gameState[0] isEqualToString:gameState[4]] && [gameState[0] isEqualToString:gameState[8]])
     {
         NSLog(@"Winner!");
         return YES;
     }
     return NO;}
 
--(BOOL)didWinDiag3
+-(BOOL)didWinDiag3: (NSArray*) gameState
 {
-    if ([self.label3.text isEqualToString:self.label5.text] && [self.label3.text isEqualToString:self.label7.text])
+    if ([gameState[2] isEqualToString:gameState[4]] && [gameState[2] isEqualToString:gameState[6]])
     {
         NSLog(@"Winner!");
         return YES;
